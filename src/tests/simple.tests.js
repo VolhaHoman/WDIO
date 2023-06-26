@@ -1,12 +1,8 @@
-const DoctorsPage = require('../po/pages/doctors.page');
-const DashboardPage = require('./../po/pages/dashboard.page');
-
-const dashboardPage = new DashboardPage();
-const doctorsPage = new DoctorsPage;
+const {pages} = require('./../po')
 
 describe('Doctors page', () => {
     beforeEach(async () => {
-        await dashboardPage.open();
+        await pages('dashboard').open();
     });
 
     it('Check page title', async () => {
@@ -16,35 +12,35 @@ describe('Doctors page', () => {
     });
 
     it('Open modal window for adding a new doctor', async () => {
-        await dashboardPage.sideMenu.item('doctors').click();
-        await doctorsPage.doctorListHeader.addNewDoctorBtn.click();
-        await expect(doctorsPage.addDoctorModal.rootElement).toBeDisplayed();
+        await pages('dashboard').sideMenu.item('doctors').click();
+        await pages('doctors').doctorListHeader.addNewDoctorBtn.click();
+        await expect(pages('doctors').addDoctorModal.rootElement).toBeDisplayed();
     });
 
     it('Add a new doctor', async () => {
-        await dashboardPage.sideMenu.item('doctors').click();
-        await doctorsPage.doctorListHeader.addNewDoctorBtn.click();
-        await doctorsPage.addDoctorModal.rootElement.waitForDisplayed();
+        await pages('dashboard').sideMenu.item('doctors').click();
+        await pages('doctors').doctorListHeader.addNewDoctorBtn.click();
+        await pages('doctors').addDoctorModal.rootElement.waitForDisplayed();
 
-        await $('[name="Name"]').setValue('Good Doctor');
-        await $('#DoctorMobile').setValue('12345678901');
-        await $('[name="Email"]').setValue('good_doctor@test.com');
-        await $('[name="Education"]').setValue('Master');
-        await $('[name="Designation"]').setValue('Test');
+        await pages('doctors').addDoctorModal.input('name').setValue('Good Doctor');
+        await pages('doctors').addDoctorModal.input('phone').setValue('12345678901');
+        await pages('doctors').addDoctorModal.input('email').setValue('good_doctor@test.com');
+        await pages('doctors').addDoctorModal.input('education').setValue('Master');
+        await pages('doctors').addDoctorModal.input('designation').setValue('Test');
 
-        await $('.e-footer-content button.e-primary').click();
+        await pages('doctors').addDoctorModal.saveBtn.click();
 
-        await expect(doctorsPage.addDoctorModal.rootElement).not.toBeDisplayed();
+        await expect(pages('doctors').addDoctorModal.rootElement).not.toBeDisplayed();
 
-        await expect($('#Specialist_8').$('.name')).toHaveText('Dr. Good Doctor');
-        await expect($('#Specialist_8').$('.education')).toHaveText('Master', {ignoreCase: true});
+        await expect(pages('doctors').specialistCard(8).name).toHaveText('Dr. Good Doctor');
+        await expect(pages('doctors').specialistCard(8).education).toHaveText('Master', {ignoreCase: true});
     });
 
     it('Close a modal window for adding a new doctor', async () => {
-        await dashboardPage.sideMenu.item('doctors').click();
-        await doctorsPage.doctorListHeader.addNewDoctorBtn.click();
-        await doctorsPage.addDoctorModal.rootElement.waitForDisplayed();
+        await pages('dashboard').sideMenu.item('doctors').click();
+        await pages('doctors').doctorListHeader.addNewDoctorBtn.click();
+        await pages('doctors').addDoctorModal.rootElement.waitForDisplayed();
         await $('.new-doctor-dialog .e-dlg-closeicon-btn').click();
-        await expect(doctorsPage.addDoctorModal.rootElement).not.toBeDisplayed();
+        await expect(pages('doctors').addDoctorModal.rootElement).not.toBeDisplayed();
     })
 });
